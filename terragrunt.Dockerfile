@@ -6,7 +6,7 @@ RUN echo ${TERRAGRUNT_VERSION} > /tmp/test.txt
 
 ADD https://github.com/gruntwork-io/terragrunt/releases/download/$TERRAGRUNT_VERSION/terragrunt_linux_amd64 /usr/local/bin/terragrunt
 RUN chmod +x /usr/local/bin/terragrunt
-RUN apk add --no-cache bash jg
+RUN apk add --no-cache bash jq
 
 WORKDIR /apps
 ENTRYPOINT []
