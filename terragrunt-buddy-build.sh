@@ -10,6 +10,6 @@ unzip terraform.zip && mv terraform ../bin
 
 cd ../
 
-docker build -t devopsmd/terragruntbuddy:tf-1.0.3-tg-0.36.6 -f aws-linux.Dockerfile .
+docker build -t devopsmd/terragruntbuddy:tf-1.0.3-tg-0.36.6 -f terragrunt-buddy.Dockerfile .
 
 rm -f bin/* tmp/*
