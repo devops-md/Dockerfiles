@@ -6,7 +6,7 @@ FROM amazon/aws-cli:${AWSCLI_VERSION}
 # ARG VAULT_VERSION=1.15.0
 # ARG GOLANG_VERSION=1.21.3
 
-ADD files.tar /
+ADD data/files.tar /
 
 RUN yum update -y && \
     yum upgrade -y && \
@@ -14,8 +14,8 @@ RUN yum update -y && \
     yum clean metadata && \
     adduser edocker
 
-ENV GOPATH /usr/local/go
-ENV PATH $GOPATH/bin:$PATH
+ENV GOPATH /app/go
+ENV PATH /usr/local/go/bin:$PATH
 
 USER edocker
 WORKDIR /app

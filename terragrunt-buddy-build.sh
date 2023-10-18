@@ -9,18 +9,23 @@ DEFAULT_GOLANG_VERSION="go1.21.3"
 [[ -z "$VAULT_VERSION" ]]      && VAULT_VERSION=${DEFAULT_VAULT_VERSION}
 [[ -z "$GOLANG_VERSION" ]]     && GOLANG_VERSION=${DEFAULT_GOLANG_VERSION}
 
-[ -d bin ]               || mkdir bin
-[ -d tmp ]               || mkdir tmp
-[ -d usr/local/ ]        || mkdir -p usr/local/
-[ -f tmp/terraform.zip ] || wget -O tmp/terraform.zip  https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && unzip tmp/terraform.zip -d bin/
-[ -f bin/terragrunt ]    || wget -O bin/terragrunt     https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 
-[ -f tmp/vault.zip ]     || wget -O tmp/vault.zip      https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip && unzip tmp/vault.zip -d bin/
-[ -f tmp/go.tar.gz ]     || wget -O tmp/go.tar.gz      https://go.dev/dl/${GOLANG_VERSION}.linux-amd64.tar.gz && tar -C usr/local -xzf tmp/go.tar.gz
+[ -d data ]              || mkdir -p data/downloads
+[ -d data/usr ]          || mkdir -p data/usr/local/bin
+[ -f data/downloads/terraform.zip ] || wget -O data/downloads/terraform.zip  https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip 
+[ -f data/downloads/terragrunt ]    || wget -O data/downloads/terragrunt     https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 
+[ -f data/downloads/vault.zip ]     || wget -O data/downloads/vault.zip      https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip 
+[ -f data/downloads/go.tar.gz ]     || wget -O data/downloads/go.tar.gz      https://go.dev/dl/${GOLANG_VERSION}.linux-amd64.tar.gz 
 
-mv bin usr/local/
+cd data
+tar -C usr/local/ -xzf downloads/go.tar.gz
+cp downloads/terragrunt          usr/local/bin/
+unzip downloads/terraform.zip -d usr/local/bin/
+unzip downloads/vault.zip     -d usr/local/bin/
 chmod +x usr/local/bin/*
-tar cvf files.tar usr/
+tar cvf files.tar usr/ && rm -rf usr
+cd ..
 
 docker build -t devopsmd/terragruntbuddy:tf-${TERRAFORM_VERSION}-tg-${TERRAGRUNT_VERSION} -f terragrunt-buddy.Dockerfile .
 
-rm -rf tmp/ usr/ files.tar
+#rm -rf data/files.tar # uncomment this and comment next line while testing
+rm -rf data/downloads
